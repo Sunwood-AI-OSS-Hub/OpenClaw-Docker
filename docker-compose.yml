@@ -1,0 +1,88 @@
+services:
+  # Bot 1 - Gateway
+  clawdbot-bot1:
+    image: clawdbot:local
+    container_name: clawdbot-bot1
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      CLAWDBOT_GATEWAY_TOKEN: ${CLAWDBOT_BOT1_GATEWAY_TOKEN}
+      GLM_API_KEY: ${GLM_API_KEY}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT1_TOKEN}
+    volumes:
+      - ./config/bot1:/home/node/.clawdbot
+      - ./workspace/bot1:/home/node/clawd
+    ports:
+      - "18789:18789"
+    init: true
+    restart: unless-stopped
+    command: ["node", "dist/index.js", "gateway"]
+    networks:
+      - clawdbot-network
+
+  # Bot 2 - Gateway
+  clawdbot-bot2:
+    image: clawdbot:local
+    container_name: clawdbot-bot2
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      CLAWDBOT_GATEWAY_TOKEN: ${CLAWDBOT_BOT2_GATEWAY_TOKEN}
+      GLM_API_KEY: ${GLM_API_KEY}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT2_TOKEN}
+    volumes:
+      - ./config/bot2:/home/node/.clawdbot
+      - ./workspace/bot2:/home/node/clawd
+    ports:
+      - "18791:18789"
+    init: true
+    restart: unless-stopped
+    command: ["node", "dist/index.js", "gateway"]
+    networks:
+      - clawdbot-network
+
+  # Bot 3 - Gateway
+  clawdbot-bot3:
+    image: clawdbot:local
+    container_name: clawdbot-bot3
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      CLAWDBOT_GATEWAY_TOKEN: ${CLAWDBOT_BOT3_GATEWAY_TOKEN}
+      GLM_API_KEY: ${GLM_API_KEY}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT3_TOKEN}
+    volumes:
+      - ./config/bot3:/home/node/.clawdbot
+      - ./workspace/bot3:/home/node/clawd
+    ports:
+      - "18793:18789"
+    init: true
+    restart: unless-stopped
+    command: ["node", "dist/index.js", "gateway"]
+    networks:
+      - clawdbot-network
+
+  # CLI for setup
+  clawdbot-cli:
+    image: clawdbot:local
+    container_name: clawdbot-cli
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      BROWSER: echo
+      GLM_API_KEY: ${GLM_API_KEY}
+    volumes:
+      - ./config/bot1:/home/node/.clawdbot
+      - ./workspace/bot1:/home/node/clawd
+    stdin_open: true
+    tty: true
+    init: true
+    entrypoint: ["node", "dist/index.js"]
+    profiles:
+      - cli
+    networks:
+      - clawdbot-network
+
+networks:
+  clawdbot-network:
+    driver: bridge

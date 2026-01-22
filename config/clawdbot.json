@@ -1,0 +1,21 @@
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "glm/glm-4.7"
+      }
+    }
+  },
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "groupPolicy": "open"
+    }
+  },
+  "gateway": {
+    "mode": "local"
+  },
+  "messages": {
+    "ackReactionScope": "all"
+  }
+}
