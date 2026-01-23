@@ -2,9 +2,7 @@
 
 ![header](assets/header.png)
 
-# Clawd Agent3 
-
-## ～clawd-multi-agent-discord-docker～
+# clawd-multi-agent-discord-docker
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue.svg)](https://www.docker.com/)
@@ -12,11 +10,11 @@
 [![GLM-4.7](https://img.shields.io/badge/AI-GLM--4.7-FF6B6B.svg)](https://open.bigmodel.cn/)
 [![Clawdbot](https://img.shields.io/badge/Bot-Clawdbot-7C3AED.svg)](https://docs.clawd.bot)
 
-[English](README.en.md) | **日本語**
+**English** | [日本語](README.md)
 
-**3つの独立したAI Discordボット**をDocker Composeで運用するための完全セットアップ
+**A complete setup for running 3 independent AI Discord bots** with Docker Compose
 
-1つのGLM-4.7 APIキーを共有しつつ、各ボットは独立したゲートウェイプロセスで動作します。
+Each bot runs with its own independent gateway process while sharing a single GLM-4.7 API key.
 
 </div>
 
@@ -39,15 +37,15 @@
 
 ## Overview
 
-このプロジェクトでは、**Clawdbot**を使用して3つの独立したDiscordボットをDocker Composeで運用します。各ボットは独自のゲートウェイプロセスとコンテナで動作し、GLM-4.7 AIモデルを共有します。
+This project runs **3 independent Discord bots** using **Clawdbot** with Docker Compose. Each bot operates with its own gateway process and container, sharing the GLM-4.7 AI model.
 
 ### Features
 
-- **3 Independent Bots**: 各ボットが独立したプロセスで動作
-- **Shared AI Model**: GLM-4.7 APIキーを共有
-- **Docker Compose**: ワンコマンドで起動・管理
-- **Isolated Workspaces**: 各ボット専用のワークスペース
-- **Easy Configuration**: JSONベースの設定管理
+- **3 Independent Bots**: Each bot runs as a separate process
+- **Shared AI Model**: Share GLM-4.7 API key across all bots
+- **Docker Compose**: One-command startup and management
+- **Isolated Workspaces**: Dedicated workspace for each bot
+- **Easy Configuration**: JSON-based configuration management
 
 ---
 
@@ -70,15 +68,15 @@
 │                         │                                   │
 │                   ┌─────▼─────┐                             │
 │                   │   GLM API  │                             │
-│                   │  (共通使用)  │                             │
+│                   │  (Shared)   │                             │
 │                   └───────────┘                             │
 └─────────────────────────────────────────────────────────────┘
                           │
                           ▼
                    ┌───────────────┐
                    │  Discord API   │
-                   │  (各ボットが   │
-                   │   別セッション) │
+                   │  (Each bot has │
+                   │ own session)   │
                    └───────────────┘
 ```
 
@@ -86,8 +84,8 @@
 
 ## Bot Configuration
 
-| ボット名 | ポート | 説明 |
-|---------|--------|------|
+| Bot Name | Port | Description |
+|----------|------|-------------|
 | CL1-Kuroha | 18789 | Bot 1 - Main Agent |
 | CL2-Reika  | 18791 | Bot 2 - Support Agent |
 | CL3-Sentinel | 18793 | Bot 3 - Monitor Agent |
@@ -96,9 +94,9 @@
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) と [Docker Compose v2](https://docs.docker.com/compose/install/)
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose v2](https://docs.docker.com/compose/install/)
 - [Zhipu AI GLM-4.7](https://open.bigmodel.cn/) API Key
-- 3つの [Discord Bot Tokens](https://discord.com/developers/applications)
+- 3 [Discord Bot Tokens](https://discord.com/developers/applications)
 
 ### Discord Bot Required Intents
 
