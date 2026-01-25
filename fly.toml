@@ -1,11 +1,11 @@
 # Clawdbot Fly.io deployment configuration
 # See https://fly.io/docs/reference/configuration/
 
-app = "clawdbot-aquarium2"
+app = "clawdbot-aquarium"
 primary_region = "nrt"
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = "clawdbot/Dockerfile"
 
 [env]
   NODE_ENV = "production"
