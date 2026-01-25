@@ -1,0 +1,412 @@
+#!/bin/bash
+set -e
+
+# ========================================
+# 🦞 Clawdbot Fly.io デプロイスクリプト
+# ========================================
+#
+# 使い方:
+#   1. .env.fly.example を .env.fly にコピー
+#   2. .env.fly に環境変数を設定
+#   3. ./scripts/fly-deploy-clawdbot.sh
+#
+# .env.fly がない場合は対話的に設定を求めます
+# ----------------------------------------
+
+# スクリプトディレクトリからプロジェクトルートへ移動
+cd "$(dirname "$0")/.."
+
+# 色定義
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# ========================================
+# ユーティリティ関数
+# ========================================
+
+info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
+success() { echo -e "${GREEN}✅ $1${NC}"; }
+warn() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
+
+prompt() {
+    local var_name=$1
+    local prompt_text=$2
+    local default_value=$3
+
+    if [ -n "$default_value" ]; then
+        read -p "$(echo -e "${CYAN}$prompt_text [${default_value}]: ${NC}")" input
+        eval "$var_name=\"${input:-$default_value}\""
+    else
+        read -p "$(echo -e "${CYAN}$prompt_text: ${NC}")" input
+        eval "$var_name=\"$input\""
+    fi
+}
+
+prompt_secret() {
+    local var_name=$1
+    local prompt_text=$2
+
+    read -sp "$(echo -e "${CYAN}$prompt_text: ${NC}")" input
+    echo ""
+    eval "$var_name=\"$input\""
+}
+
+confirm() {
+    local prompt_text=$1
+    read -p "$(echo -e "${YELLOW}$prompt_text (y/N): ${NC}")" response
+    [[ "$response" =~ ^[Yy]$ ]]
+}
+
+# ========================================
+# .env.fly 読み込み
+# ========================================
+
+load_env_file() {
+    if [ -f ".env.fly" ]; then
+        info ".env.fly を読み込み中..."
+        set -a
+        source .env.fly
+        set +a
+        success ".env.fly 読み込み完了"
+        return 0
+    else
+        warn ".env.fly が見つかりません"
+        info "対話モードで設定を入力します"
+        info "事前に .env.fly.example を .env.fly にコピーすると設定をスキップできます"
+        return 1
+    fi
+}
+
+# ========================================
+# 前提条件チェック
+# ========================================
+
+check_prerequisites() {
+    info "前提条件をチェック中..."
+
+    # flyctl チェック
+    if ! command -v fly &> /dev/null; then
+        warn "flyctl がインストールされていません"
+
+        if confirm "flyctl をインストールしますか？"; then
+            info "flyctl をインストール中..."
+
+            case "$(uname -s)" in
+                Darwin)
+                    if command -v brew &> /dev/null; then
+                        brew install flyctl
+                    else
+                        curl -L https://fly.io/install.sh | sh
+                    fi
+                    ;;
+                Linux)
+                    curl -L https://fly.io/install.sh | sh
+                    export PATH="$HOME/.fly/bin:$PATH"
+                    ;;
+                MINGW*|CYGWIN*|MSYS*)
+                    error "Windows では手動でインストールしてください: https://fly.io/docs/hands-on/install-flyctl/"
+                    ;;
+            esac
+
+            success "flyctl インストール完了"
+        else
+            error "flyctl が必要です。先にインストールしてください。"
+        fi
+    else
+        success "flyctl: $(fly version | head -n1)"
+    fi
+
+    # git チェック
+    if ! command -v git &> /dev/null; then
+        error "git がインストールされていません"
+    fi
+    success "git: $(git --version)"
+
+    # Fly.io ログインチェック
+    if ! fly auth whoami &> /dev/null; then
+        warn "Fly.io にログインしていません"
+        info "ブラウザでログインしてください..."
+        fly auth login
+        success "Fly.io ログイン完了"
+    else
+        success "Fly.io: $(fly auth whoami)"
+    fi
+}
+
+# ========================================
+# 設定収集
+# ========================================
+
+collect_config() {
+    echo ""
+    info "=== デプロイ設定 ==="
+    echo ""
+
+    # .env.fly から読み込めたか確認
+    local has_env=false
+    if [ -n "${FLY_APP_NAME}" ]; then
+        has_env=true
+    fi
+
+    # アプリ名
+    prompt APP_NAME "アプリ名（半角英数字とハイフン）" "${FLY_APP_NAME:-clawdbot-aquarium}"
+
+    # リージョン選択
+    if [ -z "${FLY_REGION}" ]; then
+        echo ""
+        info "利用可能なリージョン:"
+        echo "  nrt - 東京（日本から最速）"
+        echo "  sin - シンガポール"
+        echo "  syd - シドニー"
+        echo "  iad - バージニア（米国東海岸）"
+        echo "  sjc - サンノゼ（米国西海岸）"
+        echo "  lhr - ロンドン"
+    fi
+    prompt REGION "リージョン" "${FLY_REGION:-nrt}"
+
+    # メモリサイズ
+    if [ -z "${FLY_MEMORY}" ]; then
+        echo ""
+        info "メモリサイズ（推奨: 2048）:"
+        echo "  1024 - 1GB（軽量利用向け）"
+        echo "  2048 - 2GB（推奨）"
+        echo "  4096 - 4GB（高負荷向け）"
+    fi
+    prompt MEMORY "メモリ (MB)" "${FLY_MEMORY:-2048}"
+
+    # ボリュームサイズ
+    prompt VOLUME_SIZE "データボリュームサイズ (GB)" "${FLY_VOLUME_SIZE:-1}"
+
+    # API キー設定（.env.fly にない場合のみ）
+    if ! $has_env || [ -z "${ANTHROPIC_API_KEY}" ]; then
+        echo ""
+        info "=== API キー設定 ==="
+        echo ""
+
+        if confirm "Anthropic API キーを設定しますか？（Claude を使う場合）"; then
+            prompt_secret ANTHROPIC_API_KEY "Anthropic API キー (sk-ant-...)"
+        fi
+    else
+        ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
+    fi
+
+    if ! $has_env || [ -z "${DISCORD_BOT_TOKEN}" ]; then
+        if confirm "Discord Bot トークンを設定しますか？"; then
+            prompt_secret DISCORD_BOT_TOKEN "Discord Bot トークン"
+        fi
+    else
+        DISCORD_BOT_TOKEN="${DISCORD_BOT_TOKEN:-}"
+    fi
+
+    # 確認
+    echo ""
+    info "=== 設定確認 ==="
+    echo "  アプリ名:   ${APP_NAME}"
+    echo "  リージョン: ${REGION}"
+    echo "  メモリ:     ${MEMORY}MB"
+    echo "  ボリューム: ${VOLUME_SIZE}GB"
+    echo "  Anthropic:  ${ANTHROPIC_API_KEY:+設定済み}${ANTHROPIC_API_KEY:-未設定}"
+    echo "  Discord:    ${DISCORD_BOT_TOKEN:+設定済み}${DISCORD_BOT_TOKEN:-未設定}"
+    echo ""
+
+    if ! confirm "この設定でデプロイを続けますか？"; then
+        error "キャンセルされました"
+    fi
+}
+
+# ========================================
+# リポジトリ準備
+# ========================================
+
+prepare_repository() {
+    info "リポジトリを準備中..."
+
+    if [ -d "clawdbot" ]; then
+        info "既存の clawdbot サブモジュールを更新..."
+        git submodule update --init --recursive --remote
+    else
+        info "clawdbot サブモジュールを初期化..."
+        git submodule update --init --recursive
+    fi
+
+    success "リポジトリ準備完了"
+}
+
+# ========================================
+# fly.toml 生成
+# ========================================
+
+generate_fly_toml() {
+    info "fly.toml を生成中..."
+
+    cat > fly.toml << EOF
+# Generated by scripts/fly-deploy-clawdbot.sh
+# $(date)
+
+app = "${APP_NAME}"
+primary_region = "${REGION}"
+
+[build]
+  dockerfile = "clawdbot/Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  CLAWDBOT_PREFER_PNPM = "1"
+  CLAWDBOT_STATE_DIR = "/data"
+  NODE_OPTIONS = "--max-old-space-size=${MEMORY}"
+
+[processes]
+  app = "node dist/index.js gateway --allow-unconfigured --port 3000 --bind lan"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "${MEMORY}mb"
+
+[mounts]
+  source = "clawdbot_data"
+  destination = "/data"
+EOF
+
+    success "fly.toml 生成完了"
+}
+
+# ========================================
+# Fly.io リソース作成
+# ========================================
+
+create_fly_resources() {
+    info "Fly.io リソースを作成中..."
+
+    # アプリ作成（既存の場合はスキップ）
+    if fly apps list | grep -q "^${APP_NAME}"; then
+        warn "アプリ ${APP_NAME} は既に存在します"
+    else
+        fly apps create "${APP_NAME}"
+        success "アプリ作成完了: ${APP_NAME}"
+    fi
+
+    # ボリューム作成（既存の場合はスキップ）
+    if fly volumes list -a "${APP_NAME}" 2>/dev/null | grep -q "clawdbot_data"; then
+        warn "ボリュームは既に存在します"
+    else
+        fly volumes create clawdbot_data \
+            --size "${VOLUME_SIZE}" \
+            --region "${REGION}" \
+            -a "${APP_NAME}" \
+            -y
+        success "ボリューム作成完了"
+    fi
+}
+
+# ========================================
+# シークレット設定
+# ========================================
+
+set_secrets() {
+    info "シークレットを設定中..."
+
+    # Gateway トークン生成
+    GATEWAY_TOKEN=$(openssl rand -hex 32)
+    fly secrets set "CLAWDBOT_GATEWAY_TOKEN=${GATEWAY_TOKEN}" -a "${APP_NAME}"
+    success "Gateway トークン設定完了"
+
+    # Anthropic API キー
+    if [ -n "${ANTHROPIC_API_KEY}" ]; then
+        fly secrets set "ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}" -a "${APP_NAME}"
+        success "Anthropic API キー設定完了"
+    fi
+
+    # Discord Bot トークン
+    if [ -n "${DISCORD_BOT_TOKEN}" ]; then
+        fly secrets set "DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}" -a "${APP_NAME}"
+        success "Discord Bot トークン設定完了"
+    fi
+
+    # Gateway トークンを保存
+    echo ""
+    warn "=== 重要：Gateway トークン ==="
+    echo -e "${YELLOW}${GATEWAY_TOKEN}${NC}"
+    echo ""
+    info "このトークンは Control UI へのログインに必要です"
+    info "安全な場所に保存してください"
+
+    # ファイルに保存
+    echo "${GATEWAY_TOKEN}" > "${APP_NAME}-gateway-token.txt"
+    info "トークンを ${APP_NAME}-gateway-token.txt に保存しました"
+}
+
+# ========================================
+# デプロイ
+# ========================================
+
+deploy() {
+    info "デプロイを開始します..."
+    echo ""
+    warn "初回ビルドには 2〜3 分かかります ☕"
+    echo ""
+
+    fly deploy
+
+    success "デプロイ完了！"
+}
+
+# ========================================
+# 完了メッセージ
+# ========================================
+
+show_completion() {
+    echo ""
+    echo -e "${GREEN}========================================${NC}"
+    echo -e "${GREEN}🎉 デプロイが完了しました！${NC}"
+    echo -e "${GREEN}========================================${NC}"
+    echo ""
+    echo -e "アプリ URL:    ${CYAN}https://${APP_NAME}.fly.dev/${NC}"
+    echo -e "Control UI:    ${CYAN}https://${APP_NAME}.fly.dev/${NC}"
+    echo ""
+    echo -e "便利なコマンド:"
+    echo -e "  ${YELLOW}fly logs -a ${APP_NAME}${NC}        # ログ確認"
+    echo -e "  ${YELLOW}fly status -a ${APP_NAME}${NC}      # ステータス確認"
+    echo -e "  ${YELLOW}fly ssh console -a ${APP_NAME}${NC} # SSH 接続"
+    echo -e "  ${YELLOW}fly open -a ${APP_NAME}${NC}        # ブラウザで開く"
+    echo ""
+
+    if confirm "ログを確認しますか？"; then
+        fly logs -a "${APP_NAME}"
+    fi
+}
+
+# ========================================
+# メイン処理
+# ========================================
+
+main() {
+    echo ""
+    info "Clawdbot Fly.io デプロイスクリプトを開始します"
+    echo ""
+
+    check_prerequisites
+    load_env_file || true
+    collect_config
+    prepare_repository
+    generate_fly_toml
+    create_fly_resources
+    set_secrets
+    deploy
+    show_completion
+}
+
+# 実行
+main "$@"

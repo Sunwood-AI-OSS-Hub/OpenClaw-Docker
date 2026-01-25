@@ -1,6 +1,7 @@
 # 環境変数・シークレット
 .env
 .env.local
+.env.fly
 .env.*.local
 *.key
 *.pem
