@@ -79,3 +79,4 @@ config/bot2/
 config/bot3/cron/
 config/bot3/devices/
 config/bot3/identity/
+clawdbot-aquarium-gateway-token.txt
