@@ -1,0 +1,21 @@
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openrouter/qwen/qwen3-coder:free"
+      }
+    }
+  },
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "groupPolicy": "open"
+    }
+  },
+  "gateway": {
+    "mode": "local"
+  },
+  "messages": {
+    "ackReactionScope": "all"
+  }
+}
