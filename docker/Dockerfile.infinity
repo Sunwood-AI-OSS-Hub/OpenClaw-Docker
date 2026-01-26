@@ -30,7 +30,8 @@ RUN apt-get update && \
 RUN useradd -m -s /bin/bash agent && \
     echo "agent ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/agent && \
     chmod 440 /etc/sudoers.d/agent && \
-    usermod -aG node agent
+    usermod -aG node agent && \
+    chmod 777 /home/agent
 
 # Ensure /home/node directory exists and is writable by node group
 RUN mkdir -p /home/node && \
@@ -64,7 +65,8 @@ WORKDIR /app
 USER agent
 
 # Install Claude Code CLI for agent user
-RUN curl -fsSL https://raw.githubusercontent.com/Sunwood-ai-labs/zero-cc/main/script/install.sh | bash
+RUN curl -fsSL https://raw.githubusercontent.com/Sunwood-ai-labs/zero-cc/main/script/install.sh | bash && \
+    chmod +x /home/agent/.bashrc.d/*.sh
 
 # Keep the same entrypoint as base image (will run as agent user)
 CMD ["node", "dist/index.js"]
