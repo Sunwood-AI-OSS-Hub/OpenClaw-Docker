@@ -63,4 +63,3 @@ services:
 networks:
   infinity-network:
     driver: bridge
-    external: true
