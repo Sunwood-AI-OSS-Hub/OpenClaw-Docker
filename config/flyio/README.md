@@ -1,7 +1,7 @@
 
 ```
 mkdir -p /data
-cat > /data/clawdbot.json << 'EOF'
+cat > /data/openclaw.json << 'EOF'
 {
   "agents": {
     "defaults": {

@@ -59,7 +59,7 @@ This project runs **3 independent Discord bots** using **OpenClaw** with Docker 
 │                      Docker Host                             │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │  clawdbot-   │  │  clawdbot-   │  │  clawdbot-   │      │
+│  │  openclaw-   │  │  openclaw-   │  │  openclaw-   │      │
 │  │    bot1      │  │    bot2      │  │    bot3      │      │
 │  │  (CL1-Kuroha)│  │  (CL2-Reika) │  │ (CL3-Sentinel)│     │
 │  │              │  │              │  │              │      │
@@ -134,7 +134,7 @@ cd clawd-multi-agent-discord-docker
 #### Local Build
 
 ```bash
-docker build -t clawdbot:local ./clawdbot
+docker build -t openclaw:local ./openclaw
 ```
 
 #### Pull from GitHub Container Registry
@@ -172,9 +172,9 @@ Edit `.env`:
 
 ```bash
 # Gateway tokens (3 unique values)
-CLAWDBOT_BOT1_GATEWAY_TOKEN=your_token_1
-CLAWDBOT_BOT2_GATEWAY_TOKEN=your_token_2
-CLAWDBOT_BOT3_GATEWAY_TOKEN=your_token_3
+OPENCLAW_BOT1_GATEWAY_TOKEN=your_token_1
+OPENCLAW_BOT2_GATEWAY_TOKEN=your_token_2
+OPENCLAW_BOT3_GATEWAY_TOKEN=your_token_3
 
 # AI API Keys (configure only the providers you need)
 ZAI_API_KEY=your_glm_api_key
@@ -270,7 +270,7 @@ Each bot requires configuration files in `config/bot*/`:
 }
 ```
 
-#### `clawdbot.json` (same for all bots)
+#### `openclaw.json` (same for all bots)
 
 **For GLM-4.7:**
 
@@ -391,24 +391,24 @@ docker compose -f docker-compose.infinity.yml -f docker-compose.infinity.multi.y
 │   └── header.png
 ├── docker/
 │   └── Dockerfile.infinity         # Infinity version Dockerfile
-├── clawdbot/                       # OpenClaw source
+├── openclaw/                       # OpenClaw source
 ├── config/
 │   ├── bot1/
-│   │   ├── clawdbot.json
+│   │   ├── openclaw.json
 │   │   ├── models.json
 │   │   └── cron/
 │   │       └── jobs.json
 │   ├── bot2/
-│   │   ├── clawdbot.json
+│   │   ├── openclaw.json
 │   │   ├── models.json
 │   │   └── cron/
 │   │       └── jobs.json
 │   ├── bot3/
-│   │   ├── clawdbot.json
+│   │   ├── openclaw.json
 │   │   ├── models.json
 │   │   └── cron/
 │   │       └── jobs.json
-│   └── clawdbot.json  # Global config
+│   └── openclaw.json  # Global config
 └── workspace/
     ├── bot1/
     ├── bot2/
@@ -417,7 +417,7 @@ docker compose -f docker-compose.infinity.yml -f docker-compose.infinity.multi.y
 
 ### Configuration Options
 
-#### clawdbot.json
+#### openclaw.json
 
 | Option | Value | Description |
 |--------|-------|-------------|
@@ -466,10 +466,10 @@ docker compose -f docker-compose.yml -f docker-compose.multi.yml down
 docker compose -f docker-compose.yml -f docker-compose.multi.yml restart
 
 # Restart specific bot
-docker compose -f docker-compose.yml -f docker-compose.multi.yml restart clawdbot-bot1
+docker compose -f docker-compose.yml -f docker-compose.multi.yml restart openclaw-bot1
 
 # View logs for specific bot
-docker compose -f docker-compose.yml -f docker-compose.multi.yml logs -f clawdbot-bot1
+docker compose -f docker-compose.yml -f docker-compose.multi.yml logs -f openclaw-bot1
 
 # View all logs
 docker compose -f docker-compose.yml -f docker-compose.multi.yml logs -f
@@ -497,10 +497,10 @@ docker compose -f docker-compose.infinity.yml -f docker-compose.infinity.multi.y
 
 ```bash
 # Access CLI for bot1
-docker compose --profile cli run --rm clawdbot-cli
+docker compose --profile cli run --rm openclaw-cli
 
 # Add Discord channel via CLI
-docker compose --profile cli run --rm clawdbot-cli \
+docker compose --profile cli run --rm openclaw-cli \
     channels add --channel discord --token "${DISCORD_BOT1_TOKEN}"
 ```
 
@@ -508,23 +508,23 @@ docker compose --profile cli run --rm clawdbot-cli \
 
 ```bash
 # Access Infinity CLI for bot1
-docker compose -f docker-compose.infinity.yml run --rm clawdbot-infinity-cli
+docker compose -f docker-compose.infinity.yml run --rm openclaw-infinity-cli
 
 # Run as interactive shell
-docker compose -f docker-compose.infinity.yml run --rm clawdbot-infinity-cli bash
+docker compose -f docker-compose.infinity.yml run --rm openclaw-infinity-cli bash
 ```
 
 ### Container Access
 
 ```bash
 # Execute command in container
-docker exec -it clawdbot-bot1 node dist/index.js config set ...
+docker exec -it openclaw-bot1 node dist/index.js config set ...
 
 # Interactive shell (Standard version)
-docker exec -it clawdbot-bot1 /bin/bash
+docker exec -it openclaw-bot1 /bin/bash
 
 # Interactive shell (Infinity version)
-docker exec -it clawdbot-infinity-bot1 bash
+docker exec -it openclaw-infinity-bot1 bash
 ```
 
 ---
@@ -576,7 +576,7 @@ sudo kill -9 <PID>
 
 **Cause:** `ackReactionScope` configuration
 
-**Solution:** Check `config/bot*/clawdbot.json`:
+**Solution:** Check `config/bot*/openclaw.json`:
 ```json
 {
   "messages": {

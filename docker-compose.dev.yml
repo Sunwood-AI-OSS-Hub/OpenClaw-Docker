@@ -1,11 +1,10 @@
 services:
   # Bot 1 - Gateway (Main)
   openclaw-bot1:
-    image: ${IMAGE_REGISTRY:-ghcr.io/sunwood-ai-oss-hub/agentos-openclaw-base}:${IMAGE_TAG:-latest}
-    # For local build, uncomment below:
-    # build:
-    #   context: ./openclaw
-    #   dockerfile: Dockerfile
+    image: ${IMAGE_REGISTRY:-openclaw}:${IMAGE_TAG:-local}
+    build:
+      context: ./openclaw
+      dockerfile: Dockerfile
     container_name: openclaw-bot1
     environment:
       HOME: /home/node
@@ -28,11 +27,10 @@ services:
 
   # CLI for setup
   openclaw-cli:
-    image: ${IMAGE_REGISTRY:-ghcr.io/sunwood-ai-oss-hub/agentos-openclaw-base}:${IMAGE_TAG:-latest}
-    # For local build, uncomment below:
-    # build:
-    #   context: ./openclaw
-    #   dockerfile: Dockerfile
+    image: ${IMAGE_REGISTRY:-openclaw}:${IMAGE_TAG:-local}
+    build:
+      context: ./openclaw
+      dockerfile: Dockerfile
     container_name: openclaw-cli
     environment:
       HOME: /home/node

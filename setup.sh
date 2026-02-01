@@ -1,11 +1,11 @@
 #!/bin/bash
-# Clawdbot 3-Bot Setup Script
-# This script helps you set up 3 Discord bots using Clawdbot with GLM-4.7
+# OpenClaw 3-Bot Setup Script
+# This script helps you set up 3 Discord bots using OpenClaw with GLM-4.7
 
 set -e
 
 echo "======================================"
-echo "Clawdbot 3-Bot Setup"
+echo "OpenClaw 3-Bot Setup"
 echo "======================================"
 echo ""
 
@@ -41,7 +41,7 @@ setup_bot() {
     local BOT_NUM=$1
     local BOT_NAME="bot$BOT_NUM"
     local DISCORD_TOKEN_VAR="DISCORD_BOT${BOT_NUM}_TOKEN"
-    local GATEWAY_TOKEN_VAR="CLAWDBOT_BOT${BOT_NUM}_GATEWAY_TOKEN"
+    local GATEWAY_TOKEN_VAR="OPENCLAW_BOT${BOT_NUM}_GATEWAY_TOKEN"
     local DISCORD_TOKEN=${!DISCORD_TOKEN_VAR}
     local GATEWAY_TOKEN=${!GATEWAY_TOKEN_VAR}
 
@@ -71,8 +71,16 @@ setup_bot() {
 
     # Setup Discord channel
     echo "Adding Discord channel to $BOT_NAME..."
-    docker compose --profile cli run --rm clawdbot-${BOT_NAME}-cli \
-        channels add --channel discord --token "$DISCORD_TOKEN"
+    if [ "$BOT_NUM" = "1" ]; then
+        docker compose --profile cli run --rm openclaw-cli \
+            channels add --channel discord --token "$DISCORD_TOKEN"
+    else
+        # For bot2 and bot3, use the main CLI with custom config directory
+        docker compose --profile cli run --rm \
+            -v ./config/bot${BOT_NUM}:/home/node/.openclaw \
+            openclaw-cli \
+            channels add --channel discord --token "$DISCORD_TOKEN"
+    fi
 
     echo "✅ $BOT_NAME setup complete!"
 }
@@ -116,9 +124,9 @@ echo "Start the bots with:"
 echo "  docker compose up -d"
 echo ""
 echo "Or start individual bots:"
-echo "  docker compose up -d clawdbot-bot1"
-echo "  docker compose up -d clawdbot-bot2"
-echo "  docker compose up -d clawdbot-bot3"
+echo "  docker compose up -d openclaw-bot1"
+echo "  docker compose up -d openclaw-bot2"
+echo "  docker compose up -d openclaw-bot3"
 echo ""
 echo "Access Control UI:"
 echo "  Bot 1: http://localhost:18789/"

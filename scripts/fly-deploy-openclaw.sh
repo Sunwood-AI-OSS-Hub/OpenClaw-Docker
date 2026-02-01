@@ -2,28 +2,28 @@
 set -e
 
 # ========================================
-# 🦞 Clawdbot Fly.io デプロイスクリプト
+# 🦞 OpenClaw Fly.io デプロイスクリプト
 # ========================================
 #
 # 使い方:
 #   デプロイ:
 #     1. .env.fly.example を .env.fly にコピー
 #     2. .env.fly に環境変数を設定
-#     3. config/flyio/clawdbot.json を必要に応じて編集
-#     4. ./scripts/fly-deploy-clawdbot.sh
+#     3. config/flyio/openclaw.json を必要に応じて編集
+#     4. ./scripts/fly-deploy-openclaw.sh
 #
 #   IP制限付きデプロイ:
-#     ./scripts/fly-deploy-clawdbot.sh --proxy-ips "203.0.113.1,198.51.100.0/24"
+#     ./scripts/fly-deploy-openclaw.sh --proxy-ips "203.0.113.1,198.51.100.0/24"
 #
 #   削除:
-#     ./scripts/fly-deploy-clawdbot.sh --delete [APP_NAME]
+#     ./scripts/fly-deploy-openclaw.sh --delete [APP_NAME]
 #
 # .env.fly がない場合は対話的に設定を求めます
 #
 # .env.fly に FLY_ALLOWED_IPS を設定すると、指定したIPからのアクセスのみ許可します
 # 例: FLY_ALLOWED_IPS="203.0.113.1,198.51.100.0/24"
 #
-# 設定ファイル (config/flyio/clawdbot.json) はデプロイ時に自動で /data/.clawdbot/clawdbot.json にコピーされます
+# 設定ファイル (config/flyio/openclaw.json) はデプロイ時に自動で /data/.openclaw/openclaw.json にコピーされます
 # ----------------------------------------
 
 # スクリプトディレクトリからプロジェクトルートへ移動
@@ -175,7 +175,7 @@ collect_config() {
     fi
 
     # アプリ名
-    prompt APP_NAME "アプリ名（半角英数字とハイフン）" "${FLY_APP_NAME:-clawdbot-aquarium}"
+    prompt APP_NAME "アプリ名（半角英数字とハイフン）" "${FLY_APP_NAME:-openclaw-aquarium}"
 
     # リージョン選択
     if [ -z "${FLY_REGION}" ]; then
@@ -291,11 +291,11 @@ collect_config() {
 prepare_repository() {
     info "リポジトリを準備中..."
 
-    if [ -d "clawdbot" ]; then
-        info "既存の clawdbot サブモジュールを更新..."
+    if [ -d "openclaw" ]; then
+        info "既存の openclaw サブモジュールを更新..."
         git submodule update --init --recursive --remote
     else
-        info "clawdbot サブモジュールを初期化..."
+        info "openclaw サブモジュールを初期化..."
         git submodule update --init --recursive
     fi
 
@@ -336,10 +336,10 @@ create_fly_resources() {
     fi
 
     # ボリューム作成（既存の場合はスキップ）
-    if fly volumes list -a "${APP_NAME}" 2>/dev/null | grep -q "clawdbot_data"; then
+    if fly volumes list -a "${APP_NAME}" 2>/dev/null | grep -q "openclaw_data"; then
         warn "ボリュームは既に存在します"
     else
-        fly volumes create clawdbot_data \
+        fly volumes create openclaw_data \
             --size "${VOLUME_SIZE}" \
             --region "${REGION}" \
             -a "${APP_NAME}" \
@@ -357,7 +357,7 @@ set_secrets() {
 
     # Gateway トークン生成
     GATEWAY_TOKEN=$(openssl rand -hex 32)
-    fly secrets set "CLAWDBOT_GATEWAY_TOKEN=${GATEWAY_TOKEN}" -a "${APP_NAME}"
+    fly secrets set "OPENCLAW_GATEWAY_TOKEN=${GATEWAY_TOKEN}" -a "${APP_NAME}"
     success "Gateway トークン設定完了"
 
     # Anthropic API キー
@@ -402,8 +402,8 @@ set_secrets() {
 # ========================================
 
 setup_config_file() {
-    local local_config="config/flyio/clawdbot.json"
-    local remote_config="/data/clawdbot.json"
+    local local_config="config/flyio/openclaw.json"
+    local remote_config="/data/openclaw.json"
 
     if [ ! -f "$local_config" ]; then
         warn "設定ファイル ${local_config} が見つかりません"
@@ -589,8 +589,8 @@ show_completion() {
     echo -e "  ${YELLOW}fly proxy ips remove <IP> -a ${APP_NAME}${NC} # IPを削除"
     echo ""
     echo -e "設定ファイル:"
-    echo -e "  ${YELLOW}fly ssh console -C \"cat /data/clawdbot.json\" -a ${APP_NAME}${NC}"
-    echo -e "  ${YELLOW}fly ssh console -C \"tee /data/clawdbot.json\" -a ${APP_NAME} < config.json${NC}"
+    echo -e "  ${YELLOW}fly ssh console -C \"cat /data/openclaw.json\" -a ${APP_NAME}${NC}"
+    echo -e "  ${YELLOW}fly ssh console -C \"tee /data/openclaw.json\" -a ${APP_NAME} < config.json${NC}"
     echo ""
 
     if confirm "ログを確認しますか？"; then
@@ -618,7 +618,7 @@ main() {
 
     # ヘルプ表示
     if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-        echo "Clawdbot Fly.io デプロイスクリプト"
+        echo "OpenClaw Fly.io デプロイスクリプト"
         echo ""
         echo "使い方:"
         echo "  $0                                   # デプロイ"
@@ -637,7 +637,7 @@ main() {
     fi
 
     echo ""
-    info "Clawdbot Fly.io デプロイスクリプトを開始します"
+    info "OpenClaw Fly.io デプロイスクリプトを開始します"
     echo ""
 
     check_prerequisites

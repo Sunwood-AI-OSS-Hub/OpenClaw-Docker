@@ -21,7 +21,7 @@ A professional minimalist typography logo for a brand named "Clawd-Agent3". The 
 
 ## Color References
 
-- **Purple**: `#7C3AED` (Clawdbot brand color)
+- **Purple**: `#7C3AED` (OpenClaw brand color)
 - **Cyan**: `#5865F2` (Discord Blurple)
 - **Background**: Off-white
 

@@ -59,7 +59,7 @@ GLM-4.7 / OpenRouter APIキーを共有しつつ、各ボットは独立した�
 │                      Docker Host                             │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │  clawdbot-   │  │  clawdbot-   │  │  clawdbot-   │      │
+│  │  openclaw-   │  │  openclaw-   │  │  openclaw-   │      │
 │  │    bot1      │  │    bot2      │  │    bot3      │      │
 │  │  (CL1-Kuroha)│  │  (CL2-Reika) │  │ (CL3-Sentinel)│     │
 │  │              │  │              │  │              │      │
@@ -134,7 +134,7 @@ cd clawd-multi-agent-discord-docker
 #### ローカルビルド
 
 ```bash
-docker build -t clawdbot:local ./clawdbot
+docker build -t openclaw:local ./openclaw
 ```
 
 #### GitHub Container Registryからプル
@@ -172,9 +172,9 @@ openssl rand -hex 32  # Bot 3 用
 
 ```bash
 # ゲートウェイトークン（3つの異なる値）
-CLAWDBOT_BOT1_GATEWAY_TOKEN=生成したトークン1
-CLAWDBOT_BOT2_GATEWAY_TOKEN=生成したトークン2
-CLAWDBOT_BOT3_GATEWAY_TOKEN=生成したトークン3
+OPENCLAW_BOT1_GATEWAY_TOKEN=生成したトークン1
+OPENCLAW_BOT2_GATEWAY_TOKEN=生成したトークン2
+OPENCLAW_BOT3_GATEWAY_TOKEN=生成したトークン3
 
 # AI APIキー（必要なプロバイダーのみ設定）
 ZAI_API_KEY=あなたのGLM_APIキー
@@ -270,7 +270,7 @@ DISCORD_BOT3_TOKEN=あなたのDiscordトークン3
 }
 ```
 
-#### `clawdbot.json`（全ボット共通）
+#### `openclaw.json`（全ボット共通）
 
 **GLM-4.7 を使用する場合:**
 
@@ -391,24 +391,24 @@ docker compose -f docker-compose.infinity.yml -f docker-compose.infinity.multi.y
 │   └── header.png
 ├── docker/
 │   └── Dockerfile.infinity         # Infinity版用Dockerfile
-├── clawdbot/                       # OpenClaw ソース
+├── openclaw/                       # OpenClaw ソース
 ├── config/
 │   ├── bot1/
-│   │   ├── clawdbot.json
+│   │   ├── openclaw.json
 │   │   ├── models.json
 │   │   └── cron/
 │   │       └── jobs.json
 │   ├── bot2/
-│   │   ├── clawdbot.json
+│   │   ├── openclaw.json
 │   │   ├── models.json
 │   │   └── cron/
 │   │       └── jobs.json
 │   ├── bot3/
-│   │   ├── clawdbot.json
+│   │   ├── openclaw.json
 │   │   ├── models.json
 │   │   └── cron/
 │   │       └── jobs.json
-│   └── clawdbot.json  # グローバル設定
+│   └── openclaw.json  # グローバル設定
 └── workspace/
     ├── bot1/
     ├── bot2/
@@ -417,7 +417,7 @@ docker compose -f docker-compose.infinity.yml -f docker-compose.infinity.multi.y
 
 ### 設定オプション
 
-#### clawdbot.json
+#### openclaw.json
 
 | オプション | 値 | 説明 |
 |--------|-------|-------------|
@@ -464,10 +464,10 @@ docker compose -f docker-compose.yml -f docker-compose.multi.yml down
 docker compose -f docker-compose.yml -f docker-compose.multi.yml restart
 
 # 特定のボットを再起動
-docker compose -f docker-compose.yml -f docker-compose.multi.yml restart clawdbot-bot1
+docker compose -f docker-compose.yml -f docker-compose.multi.yml restart openclaw-bot1
 
 # 特定のボットのログを表示
-docker compose -f docker-compose.yml -f docker-compose.multi.yml logs -f clawdbot-bot1
+docker compose -f docker-compose.yml -f docker-compose.multi.yml logs -f openclaw-bot1
 
 # 全てのログを表示
 docker compose -f docker-compose.yml -f docker-compose.multi.yml logs -f
@@ -495,10 +495,10 @@ docker compose -f docker-compose.infinity.yml -f docker-compose.infinity.multi.y
 
 ```bash
 # bot1のCLIにアクセス
-docker compose --profile cli run --rm clawdbot-cli
+docker compose --profile cli run --rm openclaw-cli
 
 # CLI経由でDiscordチャンネルを追加
-docker compose --profile cli run --rm clawdbot-cli \
+docker compose --profile cli run --rm openclaw-cli \
     channels add --channel discord --token "${DISCORD_BOT1_TOKEN}"
 ```
 
@@ -506,23 +506,23 @@ docker compose --profile cli run --rm clawdbot-cli \
 
 ```bash
 # bot1のInfinity CLIにアクセス
-docker compose -f docker-compose.infinity.yml run --rm clawdbot-infinity-cli
+docker compose -f docker-compose.infinity.yml run --rm openclaw-infinity-cli
 
 # 対話型シェルとして実行
-docker compose -f docker-compose.infinity.yml run --rm clawdbot-infinity-cli bash
+docker compose -f docker-compose.infinity.yml run --rm openclaw-infinity-cli bash
 ```
 
 ### コンテナアクセス
 
 ```bash
 # コンテナ内でコマンド実行
-docker exec -it clawdbot-bot1 node dist/index.js config set ...
+docker exec -it openclaw-bot1 node dist/index.js config set ...
 
 # 対話型シェル（Standard版）
-docker exec -it clawdbot-bot1 /bin/bash
+docker exec -it openclaw-bot1 /bin/bash
 
 # 対話型シェル（Infinity版）
-docker exec -it clawdbot-infinity-bot1 bash
+docker exec -it openclaw-infinity-bot1 bash
 ```
 
 ---
@@ -574,7 +574,7 @@ sudo kill -9 <PID>
 
 **原因:** `ackReactionScope` の設定
 
-**解決策:** `config/bot*/clawdbot.json` を確認：
+**解決策:** `config/bot*/openclaw.json` を確認：
 ```json
 {
   "messages": {
