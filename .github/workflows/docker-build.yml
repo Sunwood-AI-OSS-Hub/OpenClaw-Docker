@@ -40,9 +40,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ghcr.io/sunwood-ai-oss-hub/agentos-openclaw-base
-            ${{ github.repository }}-base
+          images: ghcr.io/sunwood-ai-oss-hub/agentos-openclaw-base
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -90,9 +88,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ghcr.io/sunwood-ai-oss-hub/agentos-openclaw-browser
-            ${{ github.repository }}-browser
+          images: ghcr.io/sunwood-ai-oss-hub/agentos-openclaw-browser
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -140,9 +136,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ghcr.io/sunwood-ai-oss-hub/agentos-openclaw-infinity
-            ${{ github.repository }}-infinity
+          images: ghcr.io/sunwood-ai-oss-hub/agentos-openclaw-infinity
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
