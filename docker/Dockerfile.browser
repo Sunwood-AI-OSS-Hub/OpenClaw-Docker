@@ -1,11 +1,17 @@
 # Base image from the OpenClaw base build
 FROM ghcr.io/sunwood-ai-oss-hub/agentos-openclaw-base:latest
 
+# Switch to root user for global installations
+USER root
+
 # Install agent-browser globally
 RUN npm install -g agent-browser
 
 # Install Playwright dependencies for Chromium
 RUN npx playwright install --with-deps chromium
+
+# Switch back to node user for security
+USER node
 
 # Set working directory
 WORKDIR /app
