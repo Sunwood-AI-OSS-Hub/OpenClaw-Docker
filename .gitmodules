@@ -1,3 +1,6 @@
 [submodule "openclaw"]
 	path = openclaw
 	url = https://github.com/openclaw/openclaw.git
+[submodule "agent-identity"]
+	path = agent-identity
+	url = https://github.com/Sunwood-AI-OSS-Hub/agent-identity.git
