@@ -52,8 +52,8 @@ jobs:
       - name: Build and push base
         uses: docker/build-push-action@v6
         with:
-          context: ./clawdbot
-          file: ./clawdbot/Dockerfile
+          context: ./openclaw
+          file: ./openclaw/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
