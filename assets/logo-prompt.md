@@ -1,18 +1,18 @@
-# Clawd-Agent3 Logo Prompt
+# OpenClaw-Docker Logo Prompt
 
 ## Pattern 1: Tech Modern
 
 ### Image Generation Prompt
 
 ```
-A professional minimalist typography logo for a brand named "Clawd-Agent3". The design features sleek, clean sans-serif lettering with a futuristic edge. The letter 'C' or '3' subtly incorporates a small digital node or AI circuit element within the negative space. High-tech aesthetic, purple (#7C3AED) and cyan (#5865F2) color palette, solid off-white background, vector style, flat design.
+A professional minimalist typography logo for a brand named "OpenClaw-Docker". The design features sleek, clean sans-serif lettering with a futuristic edge. The letter 'C' or 'D' subtly incorporates a small digital node or AI circuit element within the negative space. High-tech aesthetic, purple (#7C3AED) and cyan (#5865F2) color palette, solid off-white background, vector style, flat design.
 ```
 
 ## Design Concept
 
 | Element | Description |
 |---------|-------------|
-| **Brand Name** | Clawd-Agent3 |
+| **Brand Name** | OpenClaw-Docker |
 | **Typography** | Sans-serif, futuristic |
 | **Accent** | Digital node / AI circuit in 'C' or '3' |
 | **Colors** | Purple (#7C3AED) + Cyan (#5865F2) |
@@ -32,14 +32,14 @@ A professional minimalist typography logo for a brand named "Clawd-Agent3". The 
 ### Image Generation Prompt
 
 ```
-A professional minimalist typography logo for a brand named "Clawd-Agent3". The design features elegant, clean serif lettering. The letter 'C' subtly incorporates a sumi-e style ink circle (enso) within the negative space. Japanese modern aesthetic, indigo blue (#2B4B7E) and gold (#D4AF37) color palette, solid off-white background, vector style, flat design.
+A professional minimalist typography logo for a brand named "OpenClaw-Docker". The design features elegant, clean serif lettering. The letter 'C' or 'D' subtly incorporates a sumi-e style ink circle (enso) within the negative space. Japanese modern aesthetic, indigo blue (#2B4B7E) and gold (#D4AF37) color palette, solid off-white background, vector style, flat design.
 ```
 
 ### Design Concept
 
 | Element | Description |
 |---------|-------------|
-| **Brand Name** | Clawd-Agent3 |
+| **Brand Name** | OpenClaw-Docker |
 | **Typography** | Elegant, clean serif |
 | **Accent** | Sumi-e ink circle (enso) in 'C' |
 | **Colors** | Indigo Blue (#2B4B7E) + Gold (#D4AF37) |
@@ -61,13 +61,13 @@ A professional minimalist typography logo for a brand named "Clawd-Agent3". The 
 ### Pattern 1: Tech Modern + Version
 
 ```
-A professional minimalist typography logo for a brand named "Clawd-Agent3" with version text "v0.0.0" positioned harmoniously below. The design features sleek, clean sans-serif lettering with a futuristic edge. The letter 'C' or '3' subtly incorporates a small digital node or AI circuit element within the negative space. The version number is styled in a smaller, lighter complementary font. High-tech aesthetic, purple (#7C3AED) and cyan (#5865F2) color palette, solid off-white background, vector style, flat design.
+A professional minimalist typography logo for a brand named "OpenClaw-Docker" with version text "v0.0.0" positioned harmoniously below. The design features sleek, clean sans-serif lettering with a futuristic edge. The letter 'C' or 'D' subtly incorporates a small digital node or AI circuit element within the negative space. The version number is styled in a smaller, lighter complementary font. High-tech aesthetic, purple (#7C3AED) and cyan (#5865F2) color palette, solid off-white background, vector style, flat design.
 ```
 
 ### Pattern 2: Japanese Modern + Version
 
 ```
-A professional minimalist typography logo for a brand named "Clawd-Agent3" with version text "v0.0.0" positioned harmoniously below. The design features elegant, clean serif lettering. The letter 'C' subtly incorporates a sumi-e style ink circle (enso) within the negative space. The version number is styled in a smaller, lighter complementary font. Japanese modern aesthetic, indigo blue (#2B4B7E) and gold (#D4AF37) color palette, solid off-white background, vector style, flat design.
+A professional minimalist typography logo for a brand named "OpenClaw-Docker" with version text "v0.0.0" positioned harmoniously below. The design features elegant, clean serif lettering. The letter 'C' or 'D' subtly incorporates a sumi-e style ink circle (enso) within the negative space. The version number is styled in a smaller, lighter complementary font. Japanese modern aesthetic, indigo blue (#2B4B7E) and gold (#D4AF37) color palette, solid off-white background, vector style, flat design.
 ```
 
 ### Version Text Styling
@@ -81,4 +81,4 @@ A professional minimalist typography logo for a brand named "Clawd-Agent3" with 
 
 ---
 
-> Generated for Clawd-Agent3 ~ clawd-multi-agent-discord-docker ~
+> Generated for OpenClaw-Docker ~

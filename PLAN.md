@@ -1,4 +1,4 @@
-# OpenClaw Agent3 開発計画
+# OpenClaw-Docker 開発計画
 
 ……ふふ、これからの計画をまとめておくね。
 
@@ -6,7 +6,7 @@
 
 ## 概要
 
-このプロジェクトは、**OpenClaw Agent3**（openclaw-multi-agent-discord-docker）を拡張し、以下の機能を追加するための開発計画です。
+このプロジェクトは、**OpenClaw-Docker** を拡張し、以下の機能を追加するための開発計画です。
 
 1. **MultimediaOS-MUGENスキルの統合** - fal.ai APIによる画像生成・動画制作機能の追加
 2. **Jetson対応** - NVIDIA Jetsonデバイスでの動作確認と最適化
@@ -35,7 +35,7 @@ MultimediaOS-MUGEN/
 │           └── references/
 ```
 
-#### 統合先（OpenClaw Agent3）
+#### 統合先（OpenClaw-Docker）
 
 ```
 /prj/cbot/

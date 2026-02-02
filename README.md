@@ -2,9 +2,7 @@
 
 ![header](assets/header.png)
 
-# OpenClaw Agent3
-
-## ～openclaw-multi-agent-discord-docker～
+# OpenClaw-Docker
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue.svg)](https://www.docker.com/)
@@ -128,8 +126,8 @@ GLM-4.7 / OpenRouter APIキーを共有しつつ、各ボットは独立した�
 
 ```bash
 # 1. リポジトリをクローン
-git clone --recursive https://github.com/Sunwood-AI-OSS-Hub/clawd-multi-agent-discord-docker.git
-cd clawd-multi-agent-discord-docker
+git clone --recursive https://github.com/Sunwood-AI-OSS-Hub/OpenClaw-Docker.git
+cd OpenClaw-Docker
 
 # 2. .envファイルを設定
 cp .env.example .env
@@ -171,12 +169,12 @@ ssh maki-jetson
 cd ~/Prj
 
 # 3. リポジトリをクローン（まだの場合）
-git clone --recursive https://github.com/Sunwood-AI-OSS-Hub/clawd-multi-agent-discord-docker.git
-cd clawd-multi-agent-discord-docker
+git clone --recursive https://github.com/Sunwood-AI-OSS-Hub/OpenClaw-Docker.git
+cd OpenClaw-Docker
 
 # 4. ローカルの.envを転送
 # 別のターミナルで：
-scp D:\Prj\jetson-nano-ws\.env maki-jetson:~/Prj/clawd-multi-agent-discord-docker/.env
+scp D:\Prj\jetson-nano-ws\.env maki-jetson:~/Prj/OpenClaw-Docker/.env
 
 # 5. 設定ファイルをコピー（SSH接続したターミナルで）
 for bot in bot1 bot2 bot3; do
@@ -195,8 +193,8 @@ docker compose -f docker-compose.yml -f docker-compose.multi.yml up -d
 ### 詳細設定（手動でJSONを編集する場合）
 
 ```bash
-git clone --recursive https://github.com/Sunwood-AI-OSS-Hub/clawd-multi-agent-discord-docker.git
-cd clawd-multi-agent-discord-docker
+git clone --recursive https://github.com/Sunwood-AI-OSS-Hub/OpenClaw-Docker.git
+cd OpenClaw-Docker
 ```
 
 #### 2. Dockerイメージをビルド
@@ -696,7 +694,7 @@ sudo kill -9 <PID>
 - [OpenRouter ドキュメント](https://openrouter.ai/docs)
 - [Discord Developer Portal](https://discord.com/developers/applications)
 - [Docker ドキュメント](https://docs.docker.com/)
-- [GitHub Container Registry](https://github.com/Sunwood-AI-OSS-Hub/clawd-multi-agent-discord-docker/pkgs/container/agentos-openclaw-base)
+- [GitHub Container Registry](https://github.com/Sunwood-AI-OSS-Hub/OpenClaw-Docker/pkgs/container/agentos-openclaw-base)
 
 ---
 

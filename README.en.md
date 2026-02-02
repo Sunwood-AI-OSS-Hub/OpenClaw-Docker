@@ -2,9 +2,7 @@
 
 ![header](assets/header.png)
 
-# OpenClaw Agent3
-
-## ～openclaw-multi-agent-discord-docker～
+# OpenClaw-Docker
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue.svg)](https://www.docker.com/)
@@ -125,8 +123,8 @@ You can configure both API keys and switch between them as needed.
 ### 1. Clone Repository
 
 ```bash
-git clone --recursive https://github.com/Sunwood-AI-OSS-Hub/clawd-multi-agent-discord-docker.git
-cd clawd-multi-agent-discord-docker
+git clone --recursive https://github.com/Sunwood-AI-OSS-Hub/OpenClaw-Docker.git
+cd OpenClaw-Docker
 ```
 
 ### 2. Build Docker Image
@@ -606,7 +604,7 @@ sudo kill -9 <PID>
 - [OpenRouter Documentation](https://openrouter.ai/docs)
 - [Discord Developer Portal](https://discord.com/developers/applications)
 - [Docker Documentation](https://docs.docker.com/)
-- [GitHub Container Registry](https://github.com/Sunwood-AI-OSS-Hub/clawd-multi-agent-discord-docker/pkgs/container/agentos-openclaw-base)
+- [GitHub Container Registry](https://github.com/Sunwood-AI-OSS-Hub/OpenClaw-Docker/pkgs/container/agentos-openclaw-base)
 
 ---
 
