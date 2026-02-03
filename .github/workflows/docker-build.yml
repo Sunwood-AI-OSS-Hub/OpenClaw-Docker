@@ -24,7 +24,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: true
 
       - name: Remove agent-identity submodule (not needed for CI/CD)
         run: rm -rf agent-identity
@@ -75,7 +75,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: true
 
       - name: Remove agent-identity submodule (not needed for CI/CD)
         run: rm -rf agent-identity
@@ -126,7 +126,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: true
 
       - name: Remove agent-identity submodule (not needed for CI/CD)
         run: rm -rf agent-identity
