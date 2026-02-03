@@ -1,6 +1,6 @@
 <div align="center">
 
-![header](assets/header.png)
+![header](assets/header-a.png)
 
 # OpenClaw-Docker
 
