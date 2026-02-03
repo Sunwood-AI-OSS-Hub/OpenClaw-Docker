@@ -370,13 +370,26 @@ if [ ! -d "$WORKSPACE_DIR/.git" ]; then
                 REPO_URL=$(gh repo view --json url -q .url 2>/dev/null || echo "")
                 if [ -n "$REPO_URL" ]; then
                     echo "   Repository URL: $REPO_URL"
+                else
+                    echo "   ℹ️  Repository URL not available yet (may take a moment to become accessible)"
                 fi
             else
                 echo "⚠️  GitHub repository creation failed. Creating template remote config..."
-                # Use git config commands to set remote instead of overwriting entire config
-                git remote add origin "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git" 2>/dev/null || \
-                git remote set-url origin "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git"
-                echo "   Template remote added to git config"
+                # Check if remote already exists
+                EXISTING_REMOTE=$(git remote get-url origin 2>/dev/null || echo "")
+                if [ -z "$EXISTING_REMOTE" ]; then
+                    # No remote exists, add new one
+                    git remote add origin "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git"
+                    echo "   Template remote added to git config"
+                elif [ "$EXISTING_REMOTE" != "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git" ]; then
+                    # Remote exists with different URL
+                    echo "   ℹ️  Remote 'origin' already exists with URL: $EXISTING_REMOTE"
+                    echo "   Keeping existing remote URL. To change it, run:"
+                    echo "   cd $WORKSPACE_DIR && git remote set-url origin <your-repo-url>"
+                else
+                    # Remote already has the template URL
+                    echo "   Template remote already configured"
+                fi
                 echo "   Please update the remote URL with:"
                 echo "   cd $WORKSPACE_DIR && git remote set-url origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git"
                 echo "   Then push: git push -u origin main"
