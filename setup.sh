@@ -175,6 +175,12 @@ echo "✅ Configuration files copied to $CONFIG_DIR"
 echo ""
 echo "Initializing workspace files for $AGENT_NAME..."
 
+# Check if workspace is already initialized
+if [ -f "$WORKSPACE_DIR/AGENTS.md" ]; then
+    echo "✅ Workspace files already exist, skipping creation..."
+else
+    echo "Creating workspace files..."
+
 # Create AGENTS.md (required by OpenClaw)
 cat > "$WORKSPACE_DIR/AGENTS.md" << 'EOF'
 # OpenClaw Workspace
@@ -326,12 +332,15 @@ Welcome to your new OpenClaw workspace! This file will guide you through the ini
 Refer to OpenClaw documentation: https://docs.openclaw.ai/
 EOF
 
-# Create workspace subdirectories
-mkdir -p "$WORKSPACE_DIR/memory"
-mkdir -p "$WORKSPACE_DIR/media"
-mkdir -p "$WORKSPACE_DIR/skills"
-mkdir -p "$WORKSPACE_DIR/tmp"
-mkdir -p "$WORKSPACE_DIR/canvas"
+    # Create workspace subdirectories
+    mkdir -p "$WORKSPACE_DIR/memory"
+    mkdir -p "$WORKSPACE_DIR/media"
+    mkdir -p "$WORKSPACE_DIR/skills"
+    mkdir -p "$WORKSPACE_DIR/tmp"
+    mkdir -p "$WORKSPACE_DIR/canvas"
+    
+    echo "✅ Workspace files created"
+fi
 
 # Initialize git repo (if not already initialized)
 if [ ! -d "$WORKSPACE_DIR/.git" ]; then
@@ -352,11 +361,32 @@ if [ ! -d "$WORKSPACE_DIR/.git" ]; then
             echo "Creating GitHub private repository: $REPO_NAME..."
 
             # Create private repo and push
-            gh repo create "$REPO_NAME" --private --source=. --remote=origin --push 2>&1 | grep -v "^Deploying"
-
-            echo "✅ GitHub repository created and pushed: $REPO_NAME"
-            REPO_URL=$(gh repo view --json url -q .url)
-            echo "   Repository URL: $REPO_URL"
+            if gh repo create "$REPO_NAME" --private --source=. --remote=origin --push 2>&1 | grep -v "^Deploying"; then
+                echo "✅ GitHub repository created and pushed: $REPO_NAME"
+                REPO_URL=$(gh repo view --json url -q .url 2>/dev/null || echo "")
+                if [ -n "$REPO_URL" ]; then
+                    echo "   Repository URL: $REPO_URL"
+                fi
+            else
+                echo "⚠️  GitHub repository creation failed. Creating template remote config..."
+                # Create a template .git/config with placeholder
+                cat > .git/config << 'GITCONFIG'
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+GITCONFIG
+                echo "   Template config created at $WORKSPACE_DIR/.git/config"
+                echo "   Please edit .git/config and update the remote URL, then run:"
+                echo "   cd $WORKSPACE_DIR && git push -u origin main"
+            fi
         else
             echo "⚠️  GitHub CLI (gh) is not authenticated. Skipping remote setup."
             echo "   To authenticate: gh auth login"
@@ -371,11 +401,17 @@ if [ ! -d "$WORKSPACE_DIR/.git" ]; then
     fi
 
     cd - > /dev/null
+else
+    echo ""
+    echo "✅ Git repository already exists at $WORKSPACE_DIR/.git, using existing repository"
 fi
 
 # Create today's memory file
 TODAY=$(date +%Y-%m-%d)
-cat > "$WORKSPACE_DIR/memory/$TODAY.md" << EOF
+MEMORY_FILE="$WORKSPACE_DIR/memory/$TODAY.md"
+
+if [ ! -f "$MEMORY_FILE" ]; then
+    cat > "$MEMORY_FILE" << EOF
 # Memory Log - $TODAY
 
 ## Setup
@@ -388,6 +424,10 @@ cat > "$WORKSPACE_DIR/memory/$TODAY.md" << EOF
 
 Add your daily notes here.
 EOF
+    echo "✅ Created today's memory file: $TODAY.md"
+else
+    echo "✅ Today's memory file already exists: $TODAY.md"
+fi
 
 echo "✅ Workspace initialized at $WORKSPACE_DIR"
 
